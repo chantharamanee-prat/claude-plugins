@@ -1,0 +1,14 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "prt-local",
+  "description": "Personal Claude Code plugins.",
+  "owner": { "name": "Prat Chantharamanee" },
+  "plugins": [
+    {
+      "name": "opencode-delegation",
+      "description": "Delegate ready-for-agent .scratch tickets to opencode one by one, review each with Sonnet, send fixes back, then move on.",
+      "source": "./opencode-delegation",
+      "category": "productivity"
+    }
+  ]
+}
