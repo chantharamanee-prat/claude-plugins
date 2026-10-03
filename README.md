@@ -33,4 +33,4 @@ Set `PI_MODEL` or `OPENCODE_MODEL` to override the agent's default model.
 
 ## Note
 
-The dispatch prompts are tuned for my own projects (Dart/Flutter and .NET commands, a machine without `rg`). Edit `commands/delegate.md` in each plugin to fit yours.
+The dispatch prompts are tuned for my own setup (a machine without `rg`, English-only notes). Edit `commands/delegate.md` in each plugin to fit yours.
