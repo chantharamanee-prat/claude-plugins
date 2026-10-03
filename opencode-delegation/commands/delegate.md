@@ -46,7 +46,7 @@ Then stop and wait for the completion notification. Do not poll or sleep. When i
 > When done: set the ticket's `status: closed` and `assignee: opencode`, append a dated `## Notes` entry (what changed, tests run, any deviation), and include the ticket file in your commit.
 > If you truly cannot finish, leave `status: open`, add a `## Notes` entry that explains the blocker, commit whatever work is safe, and stop.
 
-**Review.** Launch the `opencode-delegation:ticket-reviewer` agent in the foreground with this prompt: `Ticket: <T>. Base commit: <BASE>.`
+**Review.** Launch the `opencode-delegation:ticket-reviewer` agent in the foreground with this prompt (fill in the ticket path, the commit and the log path): `Ticket: <T>. Base commit: <BASE>. Gate log: bash "${CLAUDE_PLUGIN_ROOT}/scripts/gate-log.sh" "<LOG>"`
 
 **Decide.**
 
