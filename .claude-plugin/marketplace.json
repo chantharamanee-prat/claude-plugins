@@ -9,6 +9,12 @@
       "description": "Delegate ready-for-agent .scratch tickets to opencode one by one, review each with Sonnet, send fixes back, then move on.",
       "source": "./opencode-delegation",
       "category": "productivity"
+    },
+    {
+      "name": "pi-delegation",
+      "description": "Delegate ready-for-agent .scratch tickets to pi one by one, review each with Sonnet, send fixes back, then move on.",
+      "source": "./pi-delegation",
+      "category": "productivity"
     }
   ]
 }
