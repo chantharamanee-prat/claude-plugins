@@ -11,8 +11,8 @@ Personal Claude Code plugins. Claude acts as the dispatcher: it hands tickets to
 
 ```
 /plugin marketplace add chantharamanee-prat/claude-plugins
-/plugin install pi-delegation@prt-local
-/plugin install opencode-delegation@prt-local
+/plugin install pi-delegation@prt-workflow
+/plugin install opencode-delegation@prt-workflow
 ```
 
 ## Usage
