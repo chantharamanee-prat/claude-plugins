@@ -7,7 +7,7 @@ set -uo pipefail
 log=$1; shift
 mkdir -p "$(dirname "$log")"
 # message_update events repeat the whole partial message on every delta; dropping them keeps the log small
-pi -p --mode json --no-extensions --skill "$HOME/.agents/skills" ${PI_MODEL:+--model "$PI_MODEL"} "$@" </dev/null 2>>"$log.err" \
+pi -p --mode json --skill "$HOME/.agents/skills" ${PI_MODEL:+--model "$PI_MODEL"} "$@" </dev/null 2>>"$log.err" \
   | grep -v '^{"type":"message_update"' >>"$log"
 code=${PIPESTATUS[0]}
 node -e '
