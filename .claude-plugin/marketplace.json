@@ -5,6 +5,12 @@
   "owner": { "name": "Prat Chantharamanee" },
   "plugins": [
     {
+      "name": "codex-delegation",
+      "description": "Delegate ready-for-agent .scratch tickets to codex one by one, review each with Sonnet, send fixes back, then move on.",
+      "source": "./codex-delegation",
+      "category": "productivity"
+    },
+    {
       "name": "opencode-delegation",
       "description": "Delegate ready-for-agent .scratch tickets to opencode one by one, review each with Sonnet, send fixes back, then move on.",
       "source": "./opencode-delegation",

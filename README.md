@@ -2,16 +2,18 @@
 
 Personal Claude Code plugins. Claude acts as the dispatcher: it hands tickets to another coding agent, reviews each result with Sonnet, sends fixes back and writes a report.
 
-| Plugin | Implementing agent | Command |
-| --- | --- | --- |
-| `opencode-delegation` | [opencode](https://opencode.ai) | `/opencode-delegation:delegate` |
-| `pi-delegation` | [pi](https://pi.dev) | `/pi-delegation:delegate` |
+| Plugin                | Implementing agent                               | Command                         |
+| --------------------- | ------------------------------------------------ | ------------------------------- |
+| `codex-delegation`    | [codex](https://developers.openai.com/codex/cli) | `/codex-delegation:delegate`    |
+| `opencode-delegation` | [opencode](https://opencode.ai)                  | `/opencode-delegation:delegate` |
+| `pi-delegation`       | [pi](https://pi.dev)                             | `/pi-delegation:delegate`       |
 
 ## Install
 
 ```
 /plugin marketplace add chantharamanee-prat/claude-plugins
 /plugin install pi-delegation@prt-workflow
+/plugin install codex-delegation@prt-workflow
 /plugin install opencode-delegation@prt-workflow
 ```
 
@@ -25,11 +27,13 @@ The command picks up tickets in `.scratch/<feature>/issues/*.md` that have `stat
 
 ## Requirements
 
-- `pi` or `opencode` on `PATH`, already signed in to a model provider
+- `pi`, `opencode` or `codex` on `PATH`, already signed in to a model provider
 - `node` and `bash` (Git Bash on Windows)
 - Matt Pocock's skills in `~/.agents/skills` (`implement`, `tdd`, `code-review`)
 
-Set `PI_MODEL` or `OPENCODE_MODEL` to override the agent's default model.
+Set `PI_MODEL`, `OPENCODE_MODEL` or `CODEX_MODEL` to override the agent's default model.
+
+codex runs with `--dangerously-bypass-approvals-and-sandbox` (set in `codex-delegation/scripts/cx-run.sh`): like the other two agents it is not sandboxed, so only run it on repos and tickets you trust.
 
 ## Note
 
