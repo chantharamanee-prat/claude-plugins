@@ -25,11 +25,19 @@ Personal Claude Code plugins. Claude acts as the dispatcher: it hands tickets to
 
 The command picks up tickets in `.scratch/<feature>/issues/*.md` that have `status: open` and the `ready-for-agent` label, and works through them one at a time. It expects a clean working tree and is meant to run unattended.
 
+### Whole feature in parallel (opencode only)
+
+```
+/opencode-delegation:delegate-spec <feature> [--max-rounds N]
+```
+
+opencode runs the feature's tickets itself with Matt Pocock's `implement-spec` skill: parallel sub-agents in worktrees, one merge commit per ticket on the current branch. Claude runs the repo's typecheck and tests before and after, reviews each ticket's merge with Sonnet, and sends the fixes back. Faster than `delegate` when tickets do not block each other, but problems are found after the merge, not before it.
+
 ## Requirements
 
 - `pi`, `opencode` or `codex` on `PATH`, already signed in to a model provider
 - `node` and `bash` (Git Bash on Windows)
-- Matt Pocock's skills in `~/.agents/skills` (`implement`, `tdd`, `code-review`)
+- Matt Pocock's skills in `~/.agents/skills` (`implement`, `implement-spec`, `tdd`, `code-review`)
 
 Set `PI_MODEL`, `OPENCODE_MODEL` or `CODEX_MODEL` to override the agent's default model.
 
