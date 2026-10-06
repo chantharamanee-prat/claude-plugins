@@ -25,13 +25,14 @@ Personal Claude Code plugins. Claude acts as the dispatcher: it hands tickets to
 
 The command picks up tickets in `.scratch/<feature>/issues/*.md` that have `status: open` and the `ready-for-agent` label, and works through them one at a time. It expects a clean working tree and is meant to run unattended.
 
-### Whole feature in parallel (opencode only)
+### Whole feature in parallel (opencode and codex)
 
 ```
 /opencode-delegation:delegate-spec <feature> [--max-rounds N]
+/codex-delegation:delegate-spec <feature> [--max-rounds N]
 ```
 
-opencode runs the feature's tickets itself with Matt Pocock's `implement-spec` skill: parallel sub-agents in worktrees, one merge commit per ticket on the current branch. Claude runs the repo's typecheck and tests before and after, reviews each ticket's merge with Sonnet, and sends the fixes back. Faster than `delegate` when tickets do not block each other, but problems are found after the merge, not before it.
+The agent runs the feature's tickets itself with Matt Pocock's `implement-spec` skill: parallel sub-agents in worktrees, one merge commit per ticket on the current branch. Claude runs the repo's typecheck and tests before and after, reviews each ticket's merge with Sonnet, and sends the fixes back. Faster than `delegate` when tickets do not block each other, but problems are found after the merge, not before it.
 
 ## Requirements
 
