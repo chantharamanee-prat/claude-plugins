@@ -2,6 +2,9 @@
 # Runs one headless pi turn and prints a compact result:
 #   exit=<code> session=<id> stop=<reason>
 #   <last assistant text, truncated>
+# After the result a `state:` line reports worktrees=<n> pi_procs=<n> [merges=<n>].
+# The exit code only says how the CLI ended, not whether the work is done: judge by the state line and git.
+# Set PI_RUN_BASE=<sha> to also count merge commits since the run began.
 # usage: pi-run.sh <log.jsonl> [--session <id>] [--name <t>] <message>
 set -uo pipefail
 log=$1; shift
@@ -25,3 +28,5 @@ for (const l of lines) {
 console.log(`exit=${process.argv[2]} session=${sid} stop=${stop}`);
 console.log((text ?? "(no text output - see .err log)").slice(-4000));
 ' "$log" "$code"
+procs=$( (ps aux 2>/dev/null || ps -ef 2>/dev/null) | grep -c '[p]i -p --mode json')
+echo "state: worktrees=$(( $(git worktree list | wc -l) - 1 )) pi_procs=$procs${PI_RUN_BASE:+ merges=$(git log --merges --oneline "$PI_RUN_BASE"..HEAD | wc -l | tr -d ' ')}"

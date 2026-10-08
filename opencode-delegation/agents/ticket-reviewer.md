@@ -12,11 +12,11 @@ Do exactly this:
 1. Read the ticket file in full. Pull out its acceptance criteria (the `Acceptance criteria` section, or the checklist / user stories / "done when" items if that section is missing).
 2. `git log --oneline <base>..<head>` and `git diff --stat <base>..<head>`, plus `git status --short`. Read only the diff hunks you need to confirm each criterion (`git diff <base>..<head> -- <path>`).
 3. Check each criterion: is there concrete evidence in the diff (code, test, doc) that it is met? A criterion that asks for a test needs a test in the diff.
-4. Check the gates. A gate is a criterion that names commands whose result must hold (tests, typecheck, build, lint). The ticket's Notes are a claim, not evidence. Run the gate-log command you were given once: it prints the test, typecheck and build commands that were really run, each with the end of its output. For every command a gate names:
+4. Check the gates. A gate is a criterion, or a `Verification:` line in the ticket, that names commands whose result must hold (tests, typecheck, build, lint). The ticket's Notes are a claim, not evidence. Run the gate-log command you were given once: it prints the test, typecheck and build commands that were really run, each with the end of its output. For every command a gate names:
    - Find its last run in that output, in the right package. A run limited to some files does not count for a gate that asks for the whole suite. No run means the gate is unmet, whatever the Notes say.
    - Judge the result from the printed output, not the exit code: a command piped through `tail` or `grep` exits 0 even when it failed. The gate is met when the output shows a pass, or shows only the failures the ticket itself allows.
    - If the default pattern misses a command, run the gate-log command again with a regex for it as the last argument.
-   Skip this step when the ticket names no such commands.
+   If the ticket names no such commands, say so in one line under CRITERIA and list the test files the diff adds, so the missing gate is visible.
 5. Check the bookkeeping:
    - Every acceptance criterion you found met is ticked (`[x]`) in the ticket.
    - The ticket frontmatter `status` is `closed` (or the repo's done value) and a dated `## Notes` entry sums up the work.
