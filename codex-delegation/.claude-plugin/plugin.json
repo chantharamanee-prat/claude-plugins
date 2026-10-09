@@ -1,6 +1,6 @@
 {
   "name": "codex-delegation",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Delegate ready-for-agent .scratch tickets to codex one by one, review each with Sonnet, send fixes back, then move on.",
   "author": { "name": "Prat Chantharamanee" }
 }

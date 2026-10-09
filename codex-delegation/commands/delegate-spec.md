@@ -13,24 +13,29 @@ Arguments: `$ARGUMENTS`. One feature folder name (`.scratch/<feature>`). `--max-
 - If the current branch is `main` or `master`, create and check out `spec/<feature>`. The current branch is now the integration branch `BRANCH`. Record `RUN_BASE=$(git rev-parse HEAD)`.
 - `LOGDIR="${TMPDIR:-/tmp}/codex-delegation/$(basename "$PWD")/$(date +%Y%m%d-%H%M)"`. All logs go here, never inside the repo. `LOG="$LOGDIR/<feature>.jsonl"`.
 - `REPORT="$LOGDIR/report.md"`. Create it with a header that records `BRANCH` and `RUN_BASE`.
-- Tickets are `.scratch/<feature>/issues/*.md`; the conventions are in `docs/agents/issue-tracker.md` when the repo has that file. The run covers every ticket whose status is `open` and whose labels contain `ready-for-agent`. Write that list into the report. If it is empty, stop and report.
-- **Baseline gates.** Run this repo's own full typecheck and test commands for every package (see its AGENTS.md/CLAUDE.md, or the project's config files when they are not documented). For each command append to `$LOGDIR/gates-base.txt`: a `$ <command> (in <dir>)` line, then the part of the output that names each failure and the totals (at most 60 lines). Failures listed here existed before the run and are allowed later.
+- Tickets are `.scratch/<feature>/issues/*.md`; the conventions are in `docs/agents/issue-tracker.md` when the repo has that file. The run covers every ticket whose status is `open` and whose labels contain `ready-for-agent`. When the tracker doc maps these roles to one `**Status:**` value (for example `ready-for-agent` = open and ready, `closed` = done), follow the tracker doc, and put its vocabulary in the codex prompt. Write that list into the report. If it is empty, stop and report.
+- **Baseline gates.** Run this repo's own full typecheck and test commands for every package (see its AGENTS.md/CLAUDE.md, or the project's config files when they are not documented). Run at most two at once (typechecks together, then the test suites together): four parallel runs cause timeouts that look like failures. A test that times out is rerun alone before it goes into the baseline. For each command append to `$LOGDIR/gates-base.txt`: a `$ <command> (in <dir>)` line, then the part of the output that names each failure and the totals (at most 60 lines). Failures listed here existed before the run and are allowed later.
 
 ## 1. Dispatch
 
 Run this with the Bash tool with `run_in_background: true`:
 
 ```
-bash "${CLAUDE_PLUGIN_ROOT}/scripts/cx-run.sh" "$LOG" "<PROMPT>"
+CX_RUN_BASE="$RUN_BASE" bash "${CLAUDE_PLUGIN_ROOT}/scripts/cx-run.sh" "$LOG" "<PROMPT>"
 ```
 
-Then stop and wait for the completion notification. Do not poll or sleep: a feature takes hours. When it arrives, read the command's output (the `exit=… session=…` line plus the final message). Keep `SESSION`.
+Then stop and wait for the completion notification. Do not poll or sleep: a feature takes hours. When it arrives, read the command's output (the `exit=… session=…` line, the final message and the `state:` line). Keep `SESSION`.
+
+The exit code is not proof of anything: a run can exit 0 after one sentence, and exit 1 while the work carries on. Decide from `state:` and git (`git worktree list`, `git log --merges "$RUN_BASE"..HEAD`, the tickets' `Status:` lines):
+- `codex_procs` above 0, or a worktree under the temp dir with a recent commit: work is still running. Wait with a background `until` loop on `ps`, and do not resume.
+- Tickets still open, `codex_procs=0` and no worktree: the orchestrator stopped early. Resume once with `--session "$SESSION"`; this does not use up a fix round. Open the message with the state you saw, and tell it to run sub-agents in the foreground and not to end its turn before every ticket is merged or blocked.
 
 `<PROMPT>` (fill in `<feature>` and `<BRANCH>`):
 
 > Implement every open `ready-for-agent` ticket in `.scratch/<feature>/issues/` for the spec in `.scratch/<feature>/`. Read `~/.agents/skills/implement-spec/SKILL.md` and follow it. Where it says to call the Skill tool with a skill name, read `~/.agents/skills/<name>/SKILL.md` and follow that instead; tell every sub-agent the same. The issue tracker is the local markdown tracker described in `docs/agents/issue-tracker.md`.
 > The integration branch is `<BRANCH>`, already checked out in this directory. Do not create another one, do not open a PR and do not push. Put worktrees outside the repo.
 > Each implementer, in its own branch and before it reports done: runs its package's full typecheck and test suite once, ticks every acceptance criterion it met (`[x]`), sets the ticket's status to `closed` and its assignee to `codex`, appends a dated `## Notes` entry (what changed, tests run, any deviation), and commits the ticket file with the work.
+> Run every sub-agent in the foreground and wait for it. Do not end your turn while a ticket is neither merged nor blocked.
 > Do not trust an implementer's "done" message. Before merging, check that its branch has a new commit and its worktree is clean; if not, resume it until it has.
 > Merge every ticket into the integration branch with its own `git merge --no-ff`, with the subject `Merge ticket <NN>: <title>`, where `<NN>` is the ticket's file number. One merge commit per ticket, even when several finish together.
 > When a ticket cannot be finished, leave its status `open`, add a `## Notes` entry that explains the blocker, do not start the tickets it blocks, and carry on with the rest.
