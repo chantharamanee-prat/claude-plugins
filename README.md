@@ -34,6 +34,8 @@ The command picks up tickets in `.scratch/<feature>/issues/*.md` that have `stat
 
 The agent runs the feature's tickets itself with Matt Pocock's `implement-spec` skill: parallel sub-agents in worktrees, one merge commit per ticket on the current branch. Claude runs the repo's typecheck and tests before and after, reviews each ticket's merge with Sonnet, and sends the fixes back. Faster than `delegate` when tickets do not block each other, but problems are found after the merge, not before it.
 
+`opencode-delegation:delegate-spec` also handles a workspace whose code lives in nested git repos that the workspace repo ignores (for example `backend/` and `frontend/`): each repo keeps its own integration branch and gets its own merge commits, while the ticket files stay in the workspace repo.
+
 ## Requirements
 
 - `pi`, `opencode` or `codex` on `PATH`, already signed in to a model provider
