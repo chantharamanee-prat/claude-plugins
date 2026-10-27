@@ -2,9 +2,10 @@
 # Runs one headless opencode turn and prints a compact result:
 #   exit=<code> session=<id>
 #   <last assistant text, truncated>
-#   state: worktrees=<n> opencode_procs=<n> [merges=<n>]
+#   state: opencode_procs=<n> <repo>: worktrees=<n> [merges=<n>] ...
 # The exit code only says how the CLI ended, not whether the work is done: judge by the state line and git.
-# Set OC_RUN_BASE=<sha> to also count merge commits since the run began.
+# Set OC_REPOS="<dir>=<sha> ..." to report each repo and count its merge commits since <sha>.
+# Without it, OC_RUN_BASE=<sha> does the same for the current repo only.
 # usage: oc-run.sh <log.jsonl> [--session <id>] [--title <t>] <message>
 set -uo pipefail
 log=$1; shift
@@ -23,4 +24,10 @@ console.log(`exit=${process.argv[2]} session=${sid}`);
 console.log((text ?? "(no text output - see .err log)").slice(-4000));
 ' "$log" "$code"
 procs=$( (ps aux 2>/dev/null || ps -ef 2>/dev/null) | grep -c 'bin/[o]pencode')
-echo "state: worktrees=$(( $(git worktree list | wc -l) - 1 )) opencode_procs=$procs${OC_RUN_BASE:+ merges=$(git log --merges --oneline "$OC_RUN_BASE"..HEAD | wc -l | tr -d ' ')}"
+state="state: opencode_procs=$procs"
+for r in ${OC_REPOS:-.=${OC_RUN_BASE:-}}; do
+  [[ $r == *=* ]] || r+==
+  dir=${r%%=*}; base=${r#*=}
+  state+=" $dir: worktrees=$(( $(git -C "$dir" worktree list | wc -l) - 1 ))${base:+ merges=$(git -C "$dir" log --merges --oneline "$base"..HEAD | wc -l | tr -d ' ')}"
+done
+echo "$state"
