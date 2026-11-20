@@ -2,8 +2,23 @@
 # Runs one headless DeepSeek Harness (dsh) turn and prints a compact result:
 #   exit=<code> session=<id>
 #   <last assistant text, truncated>
+# After the result a `state:` line reports worktrees=<n> dsh_procs=<n> [merges=<n>].
+# The exit code only says how the CLI ended, not whether the work is done: judge by the state line and git.
+# Set DS_RUN_BASE=<sha> to also count merge commits since the run began.
 # usage: ds-run.sh <log.jsonl> [--session <id>] <message>
+#        ds-run.sh --state        (print only the state line, e.g. to wait for running work)
 set -uo pipefail
+state() {
+  # headless runs live inside "DeepSeek Harness.exe" next to the desktop app, so match the command line, not the name
+  local procs
+  if command -v powershell.exe >/dev/null; then
+    procs=$(powershell.exe -NoProfile -Command "@(Get-CimInstance Win32_Process | Where-Object { \$_.CommandLine -match 'dsh-desktop-host.+cli\.js.+headless' }).Count" | tr -d '\r')
+  else
+    procs=$(ps -eo args 2>/dev/null | grep -cE '[d]sh(-desktop-host.+cli\.js)? .*headless')
+  fi
+  echo "state: worktrees=$(( $(git worktree list | wc -l) - 1 )) dsh_procs=$procs${DS_RUN_BASE:+ merges=$(git log --merges --oneline "$DS_RUN_BASE"..HEAD | wc -l | tr -d ' ')}"
+}
+if [ "$1" = --state ]; then state; exit; fi
 log=$1; shift
 mkdir -p "$(dirname "$log")"
 resume=()
@@ -28,3 +43,4 @@ for (const l of lines) {
 console.log(`exit=${process.argv[2]} session=${sid}`);
 console.log((text || "(no text output - see .err log)").slice(-4000));
 ' "$log" "$code"
+state

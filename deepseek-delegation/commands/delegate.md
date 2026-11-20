@@ -16,7 +16,7 @@ Arguments: `$ARGUMENTS`. They can be feature folder names (`.scratch/<feature>`)
 
 ## 1. Build the queue
 
-Read the frontmatter of every `.scratch/*/issues/*.md` in scope. The issue-tracker conventions are in `docs/agents/issue-tracker.md` when the repo has that file. A ticket is eligible when all of these hold:
+Read the frontmatter of every `.scratch/*/issues/*.md` in scope. The issue-tracker conventions are in `docs/agents/issue-tracker.md` when the repo has that file. When it maps the roles to one `**Status:**` value (`ready-for-agent` = open and ready, `closed` = done), match on that value instead of `status: open` plus the label, and use its done value when closing. A ticket is eligible when all of these hold:
 
 - `status: open`
 - `labels` contains `ready-for-agent`
