@@ -1,0 +1,6 @@
+{
+  "name": "deepseek-delegation",
+  "version": "0.1.0",
+  "description": "Delegate ready-for-agent .scratch tickets to DeepSeek Harness (dsh) one by one, review each with Sonnet, send fixes back, then move on.",
+  "author": { "name": "Prat Chantharamanee" }
+}

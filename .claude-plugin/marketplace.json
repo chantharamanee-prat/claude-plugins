@@ -2,7 +2,9 @@
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "prt-workflow",
   "description": "Personal Claude Code plugins.",
-  "owner": { "name": "Prat Chantharamanee" },
+  "owner": {
+    "name": "Prat Chantharamanee"
+  },
   "plugins": [
     {
       "name": "codex-delegation",
@@ -20,6 +22,12 @@
       "name": "pi-delegation",
       "description": "Delegate ready-for-agent .scratch tickets to pi one by one, review each with Sonnet, send fixes back, then move on.",
       "source": "./pi-delegation",
+      "category": "productivity"
+    },
+    {
+      "name": "deepseek-delegation",
+      "description": "Delegate ready-for-agent .scratch tickets to DeepSeek Harness (dsh) one by one, review each with Sonnet, send fixes back, then move on.",
+      "source": "./deepseek-delegation",
       "category": "productivity"
     }
   ]

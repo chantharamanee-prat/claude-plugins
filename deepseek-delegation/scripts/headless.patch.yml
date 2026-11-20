@@ -1,0 +1,4 @@
+# dsh's headless profile ships with the credentials store turned off, so it only sees API keys
+# exported in the environment. Turn it back on so headless runs use the keys saved in the app.
+- id: credentials
+  disabled: false
